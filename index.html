@@ -1,0 +1,133 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Snake Game</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <style>
+        body {
+            text-align: center;
+            background-color: #f8f9fa;
+        }
+        canvas {
+            border: 2px solid black;
+            background-color: #fff;
+        }
+        #levelDisplay {
+            font-size: 20px;
+        }
+    </style>
+</head>
+<body>
+    <h2 class="my-3">Snake Game</h2>
+    <button id="startBtn" class="btn btn-primary mb-3">Start Game</button>
+    <div class="mb-3">
+        <label for="speedSelect">Speed: </label>
+        <select id="speedSelect" class="form-select">
+            <option value="slow">Slow</option>
+            <option value="medium">Medium</option>
+            <option value="fast">Fast</option>
+        </select>
+    </div>
+    <div id="levelDisplay" class="mb-3"></div>
+    <canvas id="gameCanvas" width="400" height="400"></canvas>
+    <p class="mt-3">Use arrow keys to move</p>
+
+    <script>
+        const canvas = document.getElementById("gameCanvas");
+        const ctx = canvas.getContext("2d");
+        let box = 20;
+        let snake = [{ x: 200, y: 200 }];
+        let direction = "RIGHT";
+        let food = {
+            x: Math.floor(Math.random() * (canvas.width / box)) * box,
+            y: Math.floor(Math.random() * (canvas.height / box)) * box
+        };
+        let gameInterval = null;
+        let level = 1;
+        let speed = 100;
+
+        document.addEventListener("keydown", changeDirection);
+        document.getElementById("startBtn").addEventListener("click", startGame);
+
+        function startGame() {
+            let speedChoice = document.getElementById("speedSelect").value;
+            if (speedChoice === "slow") {
+                speed = 200;
+            } else if (speedChoice === "medium") {
+                speed = 150;
+            } else if (speedChoice === "fast") {
+                speed = 100;
+            }
+            gameInterval = setInterval(gameLoop, speed);
+            document.getElementById("startBtn").style.display = "none";
+            updateLevelDisplay();
+        }
+
+        function updateLevelDisplay() {
+            document.getElementById("levelDisplay").innerHTML = `Level: ${level}`;
+        }
+
+        function changeDirection(event) {
+            const key = event.keyCode;
+            if (key === 37 && direction !== "RIGHT") direction = "LEFT";
+            else if (key === 38 && direction !== "DOWN") direction = "UP";
+            else if (key === 39 && direction !== "LEFT") direction = "RIGHT";
+            else if (key === 40 && direction !== "UP") direction = "DOWN";
+        }
+
+        function drawGame() {
+            ctx.clearRect(0, 0, canvas.width, canvas.height);
+            snake.forEach((segment, index) => {
+                ctx.fillStyle = index === 0 ? "green" : "lime";
+                ctx.fillRect(segment.x, segment.y, box, box);
+                ctx.strokeStyle = "black";
+                ctx.strokeRect(segment.x, segment.y, box, box);
+            });
+
+            ctx.fillStyle = "red";
+            ctx.fillRect(food.x, food.y, box, box);
+        }
+
+        function moveSnake() {
+            let head = { ...snake[0] };
+            if (direction === "LEFT") head.x -= box;
+            if (direction === "UP") head.y -= box;
+            if (direction === "RIGHT") head.x += box;
+            if (direction === "DOWN") head.y += box;
+
+            if (head.x === food.x && head.y === food.y) {
+                food.x = Math.floor(Math.random() * (canvas.width / box)) * box;
+                food.y = Math.floor(Math.random() * (canvas.height / box)) * box;
+                increaseLevel();
+            } else {
+                snake.pop();
+            }
+
+            if (head.x < 0 || head.x >= canvas.width || head.y < 0 || head.y >= canvas.height || 
+                snake.some(segment => segment.x === head.x && segment.y === head.y)) {
+                alert("Game Over!");
+                location.reload();
+            }
+
+            snake.unshift(head);
+        }
+
+        function increaseLevel() {
+            if (snake.length % 5 === 0) {
+                level++;
+                updateLevelDisplay();
+                clearInterval(gameInterval);
+                speed -= 20;
+                gameInterval = setInterval(gameLoop, speed);
+            }
+        }
+
+        function gameLoop() {
+            moveSnake();
+            drawGame();
+        }
+    </script>
+</body>
+</html>
