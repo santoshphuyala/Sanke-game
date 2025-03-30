@@ -17,11 +17,15 @@
         #levelDisplay {
             font-size: 20px;
         }
+        #endGameBtn {
+            display: none;
+        }
     </style>
 </head>
 <body>
     <h2 class="my-3">Snake Game</h2>
     <button id="startBtn" class="btn btn-primary mb-3">Start Game</button>
+    <button id="endGameBtn" class="btn btn-danger mb-3">End Game</button>
     <div class="mb-3">
         <label for="speedSelect">Speed: </label>
         <select id="speedSelect" class="form-select">
@@ -47,9 +51,12 @@
         let gameInterval = null;
         let level = 1;
         let speed = 100;
+        let snakeImage = new Image();
+        snakeImage.src = 'https://example.com/snake-image.png';  // Replace with actual snake image URL
 
         document.addEventListener("keydown", changeDirection);
         document.getElementById("startBtn").addEventListener("click", startGame);
+        document.getElementById("endGameBtn").addEventListener("click", endGame);
 
         function startGame() {
             let speedChoice = document.getElementById("speedSelect").value;
@@ -62,7 +69,15 @@
             }
             gameInterval = setInterval(gameLoop, speed);
             document.getElementById("startBtn").style.display = "none";
+            document.getElementById("endGameBtn").style.display = "inline";
             updateLevelDisplay();
+        }
+
+        function endGame() {
+            clearInterval(gameInterval);
+            document.getElementById("startBtn").style.display = "inline";
+            document.getElementById("endGameBtn").style.display = "none";
+            alert("Game Over!");
         }
 
         function updateLevelDisplay() {
@@ -80,10 +95,7 @@
         function drawGame() {
             ctx.clearRect(0, 0, canvas.width, canvas.height);
             snake.forEach((segment, index) => {
-                ctx.fillStyle = index === 0 ? "green" : "lime";
-                ctx.fillRect(segment.x, segment.y, box, box);
-                ctx.strokeStyle = "black";
-                ctx.strokeRect(segment.x, segment.y, box, box);
+                ctx.drawImage(snakeImage, segment.x, segment.y, box, box);
             });
 
             ctx.fillStyle = "red";
@@ -108,7 +120,7 @@
             if (head.x < 0 || head.x >= canvas.width || head.y < 0 || head.y >= canvas.height || 
                 snake.some(segment => segment.x === head.x && segment.y === head.y)) {
                 alert("Game Over!");
-                location.reload();
+                clearInterval(gameInterval);
             }
 
             snake.unshift(head);
