@@ -17,15 +17,12 @@
         #levelDisplay {
             font-size: 20px;
         }
-        #endGameBtn {
-            display: none;
-        }
     </style>
 </head>
 <body>
     <h2 class="my-3">Snake Game</h2>
     <button id="startBtn" class="btn btn-primary mb-3">Start Game</button>
-    <button id="endGameBtn" class="btn btn-danger mb-3">End Game</button>
+    <button id="endGameBtn" class="btn btn-danger mb-3" style="display: none;">End Game</button>
     <div class="mb-3">
         <label for="speedSelect">Speed: </label>
         <select id="speedSelect" class="form-select">
@@ -68,15 +65,15 @@
                 speed = 100;
             }
             gameInterval = setInterval(gameLoop, speed);
-            document.getElementById("startBtn").style.display = "none";
-            document.getElementById("endGameBtn").style.display = "inline";
+            document.getElementById("startBtn").style.display = "none";  // Hide start button
+            document.getElementById("endGameBtn").style.display = "inline";  // Show end button
             updateLevelDisplay();
         }
 
         function endGame() {
             clearInterval(gameInterval);
-            document.getElementById("startBtn").style.display = "inline";
-            document.getElementById("endGameBtn").style.display = "none";
+            document.getElementById("startBtn").style.display = "inline";  // Show start button
+            document.getElementById("endGameBtn").style.display = "none";  // Hide end button
             alert("Game Over!");
         }
 
@@ -119,8 +116,7 @@
 
             if (head.x < 0 || head.x >= canvas.width || head.y < 0 || head.y >= canvas.height || 
                 snake.some(segment => segment.x === head.x && segment.y === head.y)) {
-                alert("Game Over!");
-                clearInterval(gameInterval);
+                endGame();
             }
 
             snake.unshift(head);
