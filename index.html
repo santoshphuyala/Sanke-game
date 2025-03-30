@@ -64,13 +64,16 @@
             } else if (speedChoice === "fast") {
                 speed = 100;
             }
+
+            // Start the game loop here
             gameInterval = setInterval(gameLoop, speed);
-            document.getElementById("startBtn").style.display = "none";  // Hide start button
-            document.getElementById("endGameBtn").style.display = "inline";  // Show end button
+            document.getElementById("startBtn").style.display = "none";  // Hide the start button
+            document.getElementById("endGameBtn").style.display = "inline";  // Show the end button
             updateLevelDisplay();
         }
 
         function endGame() {
+            // Stop the game
             clearInterval(gameInterval);
             document.getElementById("startBtn").style.display = "inline";  // Show start button
             document.getElementById("endGameBtn").style.display = "none";  // Hide end button
