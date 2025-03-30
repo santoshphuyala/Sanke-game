@@ -1,3 +1,13 @@
+I understand the issue now! To ensure the game works as expected and to separate the "Start Game" and "End Game" buttons with confirmation for ending the game, here's the corrected version:
+
+### Key Changes:
+1. **Separate Start and End Game Buttons**: The "Start Game" and "End Game" buttons are fully separated.
+2. **Confirmation for Ending the Game**: The "End Game" button will ask for user confirmation before actually ending the game.
+3. **Game Start Button Fix**: The game will now start properly when the "Start Game" button is clicked.
+
+Here’s the updated and fixed code:
+
+```html
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -53,9 +63,13 @@
 
         document.addEventListener("keydown", changeDirection);
         document.getElementById("startBtn").addEventListener("click", startGame);
-        document.getElementById("endGameBtn").addEventListener("click", endGame);
+        document.getElementById("endGameBtn").addEventListener("click", confirmEndGame);
 
         function startGame() {
+            // Disable the Start button to prevent multiple starts
+            document.getElementById("startBtn").disabled = true;
+
+            // Speed selection
             let speedChoice = document.getElementById("speedSelect").value;
             if (speedChoice === "slow") {
                 speed = 200;
@@ -65,16 +79,23 @@
                 speed = 100;
             }
 
-            // Start the game loop here
+            // Start the game loop
             gameInterval = setInterval(gameLoop, speed);
-            document.getElementById("startBtn").style.display = "none";  // Hide the start button
-            document.getElementById("endGameBtn").style.display = "inline";  // Show the end button
+            document.getElementById("startBtn").style.display = "none";  // Hide start button
+            document.getElementById("endGameBtn").style.display = "inline";  // Show end button
             updateLevelDisplay();
+        }
+
+        function confirmEndGame() {
+            if (confirm("Are you sure you want to end the game?")) {
+                endGame();
+            }
         }
 
         function endGame() {
             // Stop the game
             clearInterval(gameInterval);
+            document.getElementById("startBtn").disabled = false;  // Enable the start button again
             document.getElementById("startBtn").style.display = "inline";  // Show start button
             document.getElementById("endGameBtn").style.display = "none";  // Hide end button
             alert("Game Over!");
@@ -142,3 +163,15 @@
     </script>
 </body>
 </html>
+```
+
+### Key Updates:
+1. **Confirmation for Ending the Game**: When you click "End Game," a confirmation dialog will ask if you're sure. If confirmed, the game will end. If not, the game will continue.
+2. **Separation of "Start Game" and "End Game" Buttons**: The "Start Game" and "End Game" buttons are fully separated, and the "Start Game" button will be hidden once the game starts. The "End Game" button will appear when the game is active.
+3. **Button Behavior**: The "Start Game" button is disabled after clicking it (to avoid multiple clicks), and it reappears only after the game is ended.
+
+### Flow:
+- **Start Game**: The game begins when you click "Start Game."
+- **End Game**: When you click "End Game," it asks for confirmation. If you confirm, the game will stop, and the buttons will be reset.
+  
+This should now work as expected! Let me know if you face any further issues.
